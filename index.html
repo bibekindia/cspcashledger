@@ -3,80 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSP LADGER BOOK</title>
+<title>CSP Home</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: Arial, sans-serif;
-}
-
 body{
+    font-family: Arial;
     background:#111;
     color:white;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start; /* moved to top */
-    height:100vh;
-    padding-top:60px; /* control top position */
-}
-
-.container{
-    width:90%;
-    max-width:400px;
     text-align:center;
 }
 
 h2{
-    margin-bottom:30px;
-    font-size:22px;
+    margin-top:30px;
 }
 
-.menu a{
+.menu{
+    margin-top:40px;
+}
+
+/* Menu Button */
+a{
     display:block;
-    margin:15px 0;
-    padding:15px;
-    background:#222;
+    margin:20px auto;
+    padding:18px;
+    width:80%;
+    max-width:300px;
+    background:#333;
     color:white;
     text-decoration:none;
-    border-radius:12px;
-    font-size:16px;
-    transition:0.3s;
+    border-radius:10px;
+    font-size:18px;
 }
 
-/* Hover effect */
-.menu a:hover{
-    background:#0a84ff;
+/* Login Box */
+.login-box{
+    margin-top:50px;
 }
 
-/* Mobile optimization */
-@media (max-width:480px){
-    body{
-        padding-top:40px; /* mobile e aro balanced */
-    }
-    h2{
-        font-size:20px;
-    }
-    .menu a{
-        font-size:15px;
-        padding:14px;
-    }
+input{
+    display:block;
+    margin:10px auto;
+    padding:12px;
+    width:80%;
+    max-width:250px;
+    border:none;
+    border-radius:8px;
+}
+
+button{
+    padding:12px 20px;
+    margin:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.logout{
+    background:red;
+    color:white;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h2>CSP LADGER BOOK</h2>
+<h2>CSP HOME MENU</h2>
 
-    <div class="menu">
-        <a href="drawer.html">💰 CASH DRAWER</a>
-        <a href="ledger.html">📊 CSP CASH LEDGER</a>
-    </div>
+<!-- 🔐 Login Section -->
+<div id="loginBox" class="login-box">
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+
+    <button onclick="login()">Login</button>
+    <button onclick="signup()">Create Account</button>
 </div>
+
+<!-- 📊 Menu Section -->
+<div id="menuBox" class="menu" style="display:none;">
+    <a href="drawer.html">💰 CASH DRAWER</a>
+    <a href="ledger.html">📊 CSP CASH LEDGER</a>
+
+    <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<!-- 🔥 Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// ✅ তোমার Firebase Config (correctly added)
+const firebaseConfig = {
+  apiKey: "AIzaSyBg1968DR9gbfsLQrP3hB8Ti5W8m2Wm9NI",
+  authDomain: "cspcashledger-9e4e3.firebaseapp.com",
+  projectId: "cspcashledger-9e4e3",
+  storageBucket: "cspcashledger-9e4e3.firebasestorage.app",
+  messagingSenderId: "845505235150",
+  appId: "1:845505235150:web:3525513789b717fd78a89f"
+};
+
+// 🔥 Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// UI Elements
+const loginBox = document.getElementById("loginBox");
+const menuBox = document.getElementById("menuBox");
+
+// 🔐 Login Function
+window.login = function(){
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if(!email || !password){
+        alert("Please enter email & password");
+        return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then(() => alert("Login Success ✅"))
+    .catch(err => alert(err.message));
+}
+
+// 🆕 Signup Function
+window.signup = function(){
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if(password.length < 6){
+        alert("Password must be at least 6 characters");
+        return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+    .then(() => alert("Account Created ✅"))
+    .catch(err => alert(err.message));
+}
+
+// 🔄 Auto Login Detect (Important)
+onAuthStateChanged(auth, user => {
+    if(user){
+        console.log("User Logged In:", user.email);
+        loginBox.style.display = "none";
+        menuBox.style.display = "block";
+    }else{
+        loginBox.style.display = "block";
+        menuBox.style.display = "none";
+    }
+});
+
+// 🚪 Logout
+window.logout = function(){
+    signOut(auth)
+    .then(() => alert("Logged Out"))
+    .catch(err => alert(err.message));
+}
+
+</script>
 
 </body>
 </html>
