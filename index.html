@@ -18,8 +18,9 @@ body{
     color:white;
     display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start; /* moved to top */
     height:100vh;
+    padding-top:60px; /* control top position */
 }
 
 .container{
@@ -52,6 +53,9 @@ h2{
 
 /* Mobile optimization */
 @media (max-width:480px){
+    body{
+        padding-top:40px; /* mobile e aro balanced */
+    }
     h2{
         font-size:20px;
     }
