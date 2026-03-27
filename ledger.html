@@ -6,25 +6,41 @@
 <title>Cash Ledger Pro</title>
 
 <style>
-body {
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
     font-family: Arial;
+}
+
+body {
     background: linear-gradient(135deg,#1f1c2c,#928dab);
     color: white;
-    margin:0;
 }
 
 .container {
-    max-width: 400px;
+    max-width: 380px;
     margin: auto;
-    padding: 15px;
+    padding: 12px;
 }
 
 h2 {
     text-align: center;
+    margin-bottom: 15px;
+    font-size: 20px;
 }
 
-.box {
-    margin-top: 15px;
+.card {
+    background: rgba(0,0,0,0.35);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(5px);
+}
+
+label{
+    font-size:13px;
+    opacity:0.8;
 }
 
 input {
@@ -33,15 +49,16 @@ input {
     margin-top: 5px;
     border-radius: 8px;
     border: none;
+    font-size:14px;
 }
 
 .result {
-    margin-top: 15px;
+    margin-top: 8px;
     text-align: center;
-    font-size: 18px;
+    font-size: 15px;
     padding:10px;
-    background: rgba(0,0,0,0.3);
     border-radius:10px;
+    background: rgba(0,0,0,0.4);
 }
 
 .greenText { color: #00e676; }
@@ -49,24 +66,26 @@ input {
 
 button {
     width: 100%;
-    padding: 12px;
-    margin-top: 10px;
+    padding: 11px;
+    margin-top: 8px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
 }
 
 .green { background: #25D366; }
 .blue { background: #2196F3; }
+.red { background: #f44336; }
 
 .history {
-    margin-top:20px;
+    margin-top:12px;
     background:#00000080;
     padding:10px;
     border-radius:10px;
-    max-height:200px;
+    max-height:160px;
     overflow-y:auto;
+    font-size:12px;
 }
 </style>
 </head>
@@ -77,29 +96,21 @@ button {
 
 <h2>📊 CSP CASH LEDGER</h2>
 
-<div class="box">
+<div class="card">
 <label>Opening Balance</label>
-<input type="number" id="opening" value="0" oninput="calculate()">
-</div>
+<input type="number" id="opening" value="" oninput="calculate()">
 
-<div class="box">
 <label>Cash Receive</label>
-<input type="number" id="receive" value="0" oninput="calculate()">
-</div>
+<input type="number" id="receive" value="" oninput="calculate()">
 
-<div class="box">
 <label>Cash Payment</label>
-<input type="number" id="payment" value="0" oninput="calculate()">
-</div>
+<input type="number" id="payment" value="" oninput="calculate()">
 
-<div class="box">
 <label>KO Withdrawal / Settlement</label>
-<input type="number" id="transfer" value="0" oninput="calculate()">
-</div>
+<input type="number" id="transfer" value="" oninput="calculate()">
 
-<div class="box">
 <label>Closing Balance</label>
-<input type="number" id="closingInput" value="0" oninput="calculate()">
+<input type="number" id="closingInput" value="" oninput="calculate()">
 </div>
 
 <div class="result" id="totalPayment">Total Payment: ₹0</div>
@@ -107,7 +118,8 @@ button {
 <div class="result" id="difference">Difference: ₹0</div>
 
 <button class="green" onclick="shareReport()">📤 Share Report</button>
-<button class="blue" onclick="saveReport()">💾 Save Daily Report</button>
+<button class="blue" onclick="saveReport()">💾 Save Report</button>
+<button class="red" onclick="resetAll()">🔄 Reset</button>
 
 <div class="history" id="history"></div>
 
@@ -122,16 +134,12 @@ let payment = +paymentInput.value || 0;
 let transfer = +transferInput.value || 0;
 let closing = +closingInput.value || 0;
 
-// Total Payment
 let totalPayment = opening + payment;
-
-// Total Receive
 let totalReceive = receive + transfer + closing;
 
 totalPaymentDiv.innerText = "Total Payment: ₹" + totalPayment;
 totalReceiveDiv.innerText = "Total Receive: ₹" + totalReceive;
 
-// Difference
 let diff = totalReceive - totalPayment;
 differenceDiv.innerText = "Difference: ₹" + diff;
 
@@ -142,7 +150,6 @@ else if(diff<0) differenceDiv.classList.add("redText");
 saveLocal();
 }
 
-// Elements
 const openingInput = document.getElementById("opening");
 const receiveInput = document.getElementById("receive");
 const paymentInput = document.getElementById("payment");
@@ -153,7 +160,21 @@ const totalPaymentDiv = document.getElementById("totalPayment");
 const totalReceiveDiv = document.getElementById("totalReceive");
 const differenceDiv = document.getElementById("difference");
 
-// Save current data
+/* RESET FUNCTION */
+function resetAll(){
+if(!confirm("সব data reset করতে চান?")) return;
+
+openingInput.value="";
+receiveInput.value="";
+paymentInput.value="";
+transferInput.value="";
+closingInput.value="";
+
+localStorage.removeItem("ledgerData");
+
+calculate();
+}
+
 function saveLocal(){
 let data={
 opening:openingInput.value,
@@ -165,7 +186,6 @@ closing:closingInput.value
 localStorage.setItem("ledgerData",JSON.stringify(data));
 }
 
-// Load
 function loadLocal(){
 let data=JSON.parse(localStorage.getItem("ledgerData"));
 if(!data) return;
@@ -179,7 +199,6 @@ closingInput.value=data.closing;
 calculate();
 }
 
-// Generate report
 function generateReport(){
 return `
 📊 CSP LEDGER REPORT
@@ -195,13 +214,11 @@ Total Receive: ₹${receiveInput.value*1 + transferInput.value*1 + closingInput.
 `;
 }
 
-// Share
 function shareReport(){
 let text=generateReport();
 window.open("https://wa.me/?text="+encodeURIComponent(text));
 }
 
-// Save history
 function saveReport(){
 let history=JSON.parse(localStorage.getItem("ledgerHistory"))||[];
 
@@ -214,7 +231,6 @@ localStorage.setItem("ledgerHistory",JSON.stringify(history));
 loadHistory();
 }
 
-// Load history
 function loadHistory(){
 let history=JSON.parse(localStorage.getItem("ledgerHistory"))||[];
 let box=document.getElementById("history");
@@ -226,7 +242,6 @@ box.innerHTML+=`<hr>${h.date}<pre>${h.text}</pre>`;
 });
 }
 
-// Init
 loadLocal();
 loadHistory();
 calculate();
