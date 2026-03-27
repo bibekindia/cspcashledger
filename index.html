@@ -6,44 +6,72 @@
 <title>CSP LADGER BOOK</title>
 
 <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+}
+
 body{
-    font-family: Arial;
     background:#111;
     color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    width:90%;
+    max-width:400px;
     text-align:center;
 }
 
 h2{
-    margin-top:30px;
+    margin-bottom:30px;
+    font-size:22px;
 }
 
-.menu{
-    margin-top:40px;
-}
-
-a{
+.menu a{
     display:block;
-    margin:20px;
-    padding:20px;
-    background:#333;
+    margin:15px 0;
+    padding:15px;
+    background:#222;
     color:white;
     text-decoration:none;
-    border-radius:10px;
-    font-size:18px;
+    border-radius:12px;
+    font-size:16px;
+    transition:0.3s;
+}
+
+/* Hover effect */
+.menu a:hover{
+    background:#0a84ff;
+}
+
+/* Mobile optimization */
+@media (max-width:480px){
+    h2{
+        font-size:20px;
+    }
+    .menu a{
+        font-size:15px;
+        padding:14px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<h2>🏦 CSP LADGER BOOK</h2>
+<div class="container">
+    <h2>🏦 CSP LADGER BOOK</h2>
 
-<div class="menu">
-
-<a href="drawer.html">💰 CASH DRAWER</a>
-
-<a href="ledger.html">📊 CSP CASH LEDGER</a>
-
+    <div class="menu">
+        <a href="drawer.html">💰 CASH DRAWER</a>
+        <a href="ledger.html">📊 CSP CASH LEDGER</a>
+    </div>
 </div>
 
 </body>
