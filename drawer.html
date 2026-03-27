@@ -38,11 +38,7 @@ h2{
     padding: 6px 0;
 }
 
-.note { 
-    width: 60px;
-    font-size: 16px; 
-    font-weight: bold; 
-}
+.note { width: 60px; font-size: 16px; font-weight: bold; }
 
 .controls {
     display: flex;
@@ -59,8 +55,8 @@ h2{
     border: none;
 }
 
-.plus { background: green; color: white; }
-.minus { background: red; color: white; }
+.plus { background: green; }
+.minus { background: red; }
 
 input {
     width: 45px;
@@ -87,7 +83,6 @@ input {
     padding: 6px;
     margin-top: 4px;
     margin-bottom: 8px;
-    font-size:14px;
 }
 
 .final {
@@ -108,6 +103,7 @@ input {
 
 .green { background: #25D366; }
 .blue { background: #2196F3; }
+.red { background: #f44336; }
 
 .history {
     margin-top: 10px;
@@ -131,16 +127,17 @@ input {
 
 <div class="section">
     <label>BANK BALANCE</label>
-    <input type="number" id="bank" placeholder="Enter amount" oninput="update()">
+    <input type="number" id="bank" value="" oninput="update()">
 
     <label>WALLET / CSP ID BALANCE</label>
-    <input type="number" id="wallet" placeholder="Enter amount" oninput="update()">
+    <input type="number" id="wallet" value="" oninput="update()">
 </div>
 
 <div class="final" id="grandTotal">TOTAL: ₹0</div>
 
 <button class="big-btn green" onclick="shareWhatsApp()">📤 SHARE</button>
 <button class="big-btn blue" onclick="saveReport()">💾 SAVE</button>
+<button class="big-btn red" onclick="resetAll()">🔄 RESET</button>
 
 <div class="history" id="history"></div>
 
@@ -200,6 +197,22 @@ function update(){
     saveLocal();
 }
 
+/* RESET → BLANK */
+function resetAll(){
+    if(!confirm("সব data reset করতে চান?")) return;
+
+    document.querySelectorAll(".row input").forEach(i=>{
+        i.value = "";  // blank
+    });
+
+    bankInput.value = "";
+    walletInput.value = "";
+
+    localStorage.removeItem("cashData");
+
+    update();
+}
+
 function saveLocal(){
     let data={
         notes:[],
@@ -219,11 +232,11 @@ function loadLocal(){
     if(!data) return;
 
     document.querySelectorAll(".row input").forEach((i,index)=>{
-        i.value=data.notes[index] || "";
+        i.value=data.notes[index];
     });
 
-    bankInput.value=data.bank || "";
-    walletInput.value=data.wallet || "";
+    bankInput.value=data.bank;
+    walletInput.value=data.wallet;
 
     update();
 }
