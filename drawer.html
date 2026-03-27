@@ -3,86 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CASH DRAWER </title>
+<title>CASH DRAWER</title>   
 
 <style>
-body {
-    background: black;
-    color: white;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
     font-family: Arial;
 }
 
-.container {
-    max-width: 400px;
-    margin: auto;
+body {
+    background: #000;
+    color: #fff;
 }
 
+.container {
+    max-width: 360px;
+    margin: auto;
+    padding: 10px;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:18px;
+}
+
+/* Row fixed layout */
 .row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid green;
-    padding: 10px 0;
+    justify-content: space-between;
+    border-bottom: 1px solid #0f0;
+    padding: 6px 0;
 }
 
-.note { font-size: 20px; font-weight: bold; }
+/* Fixed columns */
+.note { 
+    width: 60px;
+    font-size: 16px; 
+    font-weight: bold; 
+}
 
 .controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    width: 110px; /* fixed */
 }
 
-button { cursor: pointer; }
-
+/* Buttons */
 .circle {
-    width: 35px;
-    height: 35px;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
     border-radius: 50%;
     border: none;
-    font-size: 18px;
 }
 
 .plus { background: green; color: white; }
 .minus { background: red; color: white; }
 
+/* Fixed input */
 input {
-    width: 60px;
+    width: 45px;
+    height: 28px;
+    font-size: 14px;
     text-align: center;
+    flex-shrink: 0;
+}
+
+/* Total column */
+.total {
+    width: 70px;
+    text-align: right;
+}
+
+/* Section inputs */
+.section{
+    margin-top:10px;
+}
+
+.section label{
+    font-size:13px;
 }
 
 .section input {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
+    padding: 6px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    font-size:14px;
 }
 
+/* Total */
 .final {
     text-align: center;
-    margin-top: 20px;
-    font-size: 20px;
+    margin-top: 10px;
+    font-size: 16px;
     color: yellow;
 }
 
+/* Buttons */
 .big-btn {
     width: 100%;
-    padding: 12px;
-    margin-top: 10px;
+    padding: 10px;
+    margin-top: 6px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
-.green { background: #25D366; color: white; }
-.blue { background: #2196F3; color: white; }
+.green { background: #25D366; }
+.blue { background: #2196F3; }
 
+/* History */
 .history {
-    margin-top: 20px;
+    margin-top: 10px;
     background: #111;
-    padding: 10px;
-    border-radius: 8px;
-    max-height: 200px;
+    padding: 8px;
+    border-radius: 6px;
+    max-height: 150px;
     overflow-y: auto;
+    font-size: 12px;
 }
 </style>
 </head>
@@ -105,8 +149,8 @@ input {
 
 <div class="final" id="grandTotal">TOTAL: ₹0</div>
 
-<button class="big-btn green" onclick="shareWhatsApp()">📤 SHARE REPORT</button>
-<button class="big-btn blue" onclick="saveReport()">💾 SAVE DAILY REPORT</button>
+<button class="big-btn green" onclick="shareWhatsApp()">📤 SHARE</button>
+<button class="big-btn blue" onclick="saveReport()">💾 SAVE</button>
 
 <div class="history" id="history"></div>
 
@@ -142,6 +186,10 @@ function change(btn,val){
     update();
 }
 
+const bankInput=document.getElementById("bank");
+const walletInput=document.getElementById("wallet");
+const grandTotal=document.getElementById("grandTotal");
+
 function update(){
     let rows=document.querySelectorAll(".row");
     let grand=0;
@@ -157,15 +205,10 @@ function update(){
     let wallet=parseFloat(walletInput.value)||0;
 
     grand+=bank+wallet;
-
     grandTotal.innerText="TOTAL: ₹"+grand;
 
     saveLocal();
 }
-
-const bankInput=document.getElementById("bank");
-const walletInput=document.getElementById("wallet");
-const grandTotal=document.getElementById("grandTotal");
 
 function saveLocal(){
     let data={
@@ -218,12 +261,11 @@ function generateReport(){
     let wallet=parseFloat(walletInput.value)||0;
 
     text+=`\nBANK: ₹${bank}`;
-    text+=`\nWALLET/CSP: ₹${wallet}`;
+    text+=`\nWALLET: ₹${wallet}`;
 
     grand+=bank+wallet;
 
     text+=`\n\nTOTAL: ₹${grand}`;
-
     return text;
 }
 
@@ -245,7 +287,7 @@ function loadHistory(){
     let history=JSON.parse(localStorage.getItem("history"))||[];
     let box=document.getElementById("history");
 
-    box.innerHTML="<b>📅 HISTORY</b><br>";
+    box.innerHTML="<b>📅 HISTORY</b>";
 
     history.forEach(h=>{
         box.innerHTML+=`<hr>${h.date}<br><pre>${h.text}</pre>`;
